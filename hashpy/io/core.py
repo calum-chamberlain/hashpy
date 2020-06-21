@@ -17,15 +17,11 @@ import importlib
 
 ### Add I/O formats here! ####################################################
 #
-IO_REGISTRY = { "OBSPY" : { "module" : "obspyIO" ,
-                            "in"     : "inputOBSPY",
-                            "out"    : "outputOBSPY",
-                          },
-
-                "ANTELOPE" : { "module" : "antelopeIO" },
-                
-                "FPFIT" : { "module" : 'fpfitIO' },
-              }
+IO_REGISTRY = {
+    "OBSPY": {"module": "obspyIO", "in": "inputOBSPY", "out": "outputOBSPY",},
+    "ANTELOPE": {"module": "antelopeIO"},
+    "FPFIT": {"module": "fpfitIO"},
+}
 ##############################################################################
 
 #
@@ -44,9 +40,10 @@ def outputSTRING(hp):
 
     """
     x = hp._best_quality_index
-    s,d,r = hp.str_avg[x], hp.dip_avg[x], hp.rak_avg[x]
-    return 'Solution:{orid} |  STRIKE: {st:0.1f}  DIP: {dp:0.1f}  RAKE: {rk:0.1f}  | Quality:{q}'.format(orid=hp.icusp,
-        st=float(s), dp=float(d), rk=float(r), q=hp.qual[x])
+    s, d, r = hp.str_avg[x], hp.dip_avg[x], hp.rak_avg[x]
+    return "Solution:{orid} |  STRIKE: {st:0.1f}  DIP: {dp:0.1f}  RAKE: {rk:0.1f}  | Quality:{q}".format(
+        orid=hp.icusp, st=float(s), dp=float(d), rk=float(r), q=hp.qual[x]
+    )
 
 
 class Inputter(object):
@@ -54,7 +51,7 @@ class Inputter(object):
     Class whose instances are input/load/read functions for HASH
 
     """
-    
+
     __input_fxn = None
 
     @property
@@ -65,14 +62,15 @@ class Inputter(object):
     def _input(self, input_function):
         self.__input_fxn = input_function
 
-
     def __init__(self, format=None):
         """
         Get the input function and return an inputter that calls it
         """
         if format is not None and format in IO_REGISTRY:
             io_format = IO_REGISTRY[format.upper()]
-            io_module = importlib.import_module("hashpy.io." + io_format["module"]) # TODO catch keyerror, importerror
+            io_module = importlib.import_module(
+                "hashpy.io." + io_format["module"]
+            )  # TODO catch keyerror, importerror
             input_fxn_name = io_format.get("in", "input")
             self._input = getattr(io_module, input_fxn_name)
         else:
@@ -87,7 +85,7 @@ class Outputter(object):
     Class whose instances are output/write functions for HASH
 
     """
-    
+
     __output_fxn = None
 
     @property
@@ -98,7 +96,6 @@ class Outputter(object):
     def _output(self, output_function):
         self.__output_fxn = output_function
 
-
     def __init__(self, format=None):
         """
         Get the input function and return an inputter that calls it
@@ -106,14 +103,13 @@ class Outputter(object):
         """
         if format is not None and format in IO_REGISTRY:
             io_format = IO_REGISTRY[format.upper()]
-            io_module = importlib.import_module("hashpy.io." + io_format["module"]) # TODO catch keyerror, importerror
+            io_module = importlib.import_module(
+                "hashpy.io." + io_format["module"]
+            )  # TODO catch keyerror, importerror
             output_fxn_name = io_format.get("out", "output")
             self._output = getattr(io_module, output_fxn_name)
         else:
             self._output = outputSTRING
-    
+
     def __call__(self, *args, **kwargs):
         return self._output(*args, **kwargs)
-
-
-

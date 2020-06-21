@@ -79,8 +79,8 @@ Currently Supports:
 from hashpy import HashPype, HashError
 
 # Make an ObsPy Event, or get from a QuakeML file
-from obspy.core.event import readEvents
-event = readEvents('my_quakeml_file.xml').events[0]
+from obspy.core.event import read_events
+event = read_events('my_quakeml_file.xml')[0]
 
 # Set configuration at creation with a dict...
 # ...can from file or interactively, etc

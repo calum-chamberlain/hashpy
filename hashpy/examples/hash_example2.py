@@ -38,7 +38,8 @@ from sys import argv
 from hashpy import *
 import math # should use numpy eventually
 import numpy as np
-from hash_utils import fortran_include, get_sta_coords, test_stereo
+from hashpy.scripts.hash_utils import (
+    fortran_include, get_sta_coords, test_stereo)
 
 
 npick0, nmc0, nmax0 = fortran_include('param.inc')
@@ -137,21 +138,21 @@ if 1:
     for i in range(num_vel_mods):
         ntab = mk_table_add(i+1,vmfile[i])  
 else:
-    stfile   = raw_input('Enter station list file: ')
-    plfile   = raw_input('Enter station polarity reversal file: ')
-    fpfile   = raw_input('Enter name of input file (FPFIT-like format): ')
-    outfile1 = raw_input('Enter output file name for focal mechanisms: ')
-    outfile2 = raw_input('Enter output file name for acceptable planes: ')
-    npolmin  = raw_input('Enter mininum number of polarities (e.g., 8) :')
-    max_agap = raw_input('Enter maximum azimuthal gap (e.g., 90): ')
-    max_pgap = raw_input('Enter maximum takeoff angle gap (e.g., 60): ')
-    dang     = raw_input('Enter grid angle for focal mech search, in degrees (min {0}): '.format(dang0))
-    nmc      = raw_input('Enter number of trials (e.g., 30): ')
-    maxout   = raw_input('Enter maxout for focal mech. output (e.g., 500): ')
-    badfrac  = raw_input('Enter fraction of picks presumed bad (e.g., 0.10): ')
-    delmax   = raw_input('Enter maximum allowed source-station distance, in km (e.g., 120): ')
-    cangle   = raw_input('Enter angle for computing mechanisms probability, in degrees (e.g., 45): ')
-    prob_max = raw_input('Enter probability threshold for multiples (e.g., 0.1): ')
+    stfile   = input('Enter station list file: ')
+    plfile   = input('Enter station polarity reversal file: ')
+    fpfile   = input('Enter name of input file (FPFIT-like format): ')
+    outfile1 = input('Enter output file name for focal mechanisms: ')
+    outfile2 = input('Enter output file name for acceptable planes: ')
+    npolmin  = input('Enter mininum number of polarities (e.g., 8) :')
+    max_agap = input('Enter maximum azimuthal gap (e.g., 90): ')
+    max_pgap = input('Enter maximum takeoff angle gap (e.g., 60): ')
+    dang     = input('Enter grid angle for focal mech search, in degrees (min {0}): '.format(dang0))
+    nmc      = input('Enter number of trials (e.g., 30): ')
+    maxout   = input('Enter maxout for focal mech. output (e.g., 500): ')
+    badfrac  = input('Enter fraction of picks presumed bad (e.g., 0.10): ')
+    delmax   = input('Enter maximum allowed source-station distance, in km (e.g., 120): ')
+    cangle   = input('Enter angle for computing mechanisms probability, in degrees (e.g., 45): ')
+    prob_max = input('Enter probability threshold for multiples (e.g., 0.1): ')
     ntab = 10
     ntab = mk_table(ntab)  
 
@@ -293,10 +294,10 @@ while True:
     
     # view polarity data
     for k in range(npol):
-        print '{0}   {1} {2} {3} {4}'.format(k,sname[k],p_azi_mc[k,0],p_the_mc[k,0],p_pol[k])
+        print('{0}   {1} {2} {3} {4}'.format(k,sname[k],p_azi_mc[k,0],p_the_mc[k,0],p_pol[k]))
     
     # stop if there aren't enough polarities
-    print 'cid = {0}  npol = {1}'.format(icusp,npol)
+    print('cid = {0}  npol = {1}'.format(icusp,npol))
     if (npol < npolmin):
         str_avg[0] = 999
         dip_avg[0] = 99
@@ -347,7 +348,7 @@ while True:
         
         for imult in range(nmult):
             var_avg[imult] = (var_est[0,imult] + var_est[1,imult]) / 2.
-            print 'cid = {0} {1}  mech = {2} {3} {4}'.format(icusp,imult,str_avg[imult],dip_avg[imult],rak_avg[imult])
+            print('cid = {0} {1}  mech = {2} {3} {4}'.format(icusp,imult,str_avg[imult],dip_avg[imult],rak_avg[imult]))
             # find misfit for prefered solution
             mfrac[imult],stdr[imult] =  get_misf(p_azi_mc[:npol,0],p_the_mc[:npol,0],p_pol[:npol],p_qual[:npol],str_avg[imult],dip_avg[imult],rak_avg[imult],npol) # npol
             
@@ -391,7 +392,7 @@ while True:
     
     #test_stereo(p_azi_mc[:npol,0],p_the_mc[:npol,0],p_pol[:npol],sdr=[str_avg[0],dip_avg[0],rak_avg[0]])
 
-    go_again = raw_input("Continue or stop (and graph)? [Y/n]: ")
+    go_again = input("Continue or stop (and graph)? [Y/n]: ")
     
     if go_again == '' or go_again in 'Yesyes':
         continue # next earthquake line
