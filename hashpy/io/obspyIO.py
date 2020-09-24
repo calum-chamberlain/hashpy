@@ -4,19 +4,33 @@
 from hashpy.doublecouple import DoubleCouple
 from obspy.core.utcdatetime import UTCDateTime
 from obspy.core.event import (
+    Catalog,
     Event,
     Origin,
     CreationInfo,
+    Magnitude,
+    EventDescription,
+    OriginUncertainty,
+    OriginQuality,
+    CompositeTime,
+    ConfidenceEllipsoid,
+    StationMagnitude,
     Comment,
     WaveformStreamID,
     Pick,
+    QuantityError,
     Arrival,
     FocalMechanism,
+    MomentTensor,
     NodalPlanes,
     PrincipalAxes,
     Axis,
     NodalPlane,
+    SourceTimeFunction,
+    Tensor,
+    DataUsed,
     ResourceIdentifier,
+    StationMagnitudeContribution,
 )
 
 
@@ -49,12 +63,18 @@ def inputOBSPY(hp, event):
     hp.qlat = _o.latitude
     hp.qlon = _o.longitude
     hp.qdep = _o.depth
-    hp.icusp = _o.creation_info.version
-    if _o.origin_uncertainty and _o.origin_uncertainty.confidence_ellipsoid:
+    try:
+        hp.icusp = _o.creation_info.version
+    except AttributeError:
+        hp.icusp = "1"
+    try:
         hp.seh = _o.origin_uncertainty.confidence_ellipsoid.semi_major_axis_length
+    except Exception:
+        hp.seh = 5.0
+    try:
         hp.sez = _o.origin_uncertainty.confidence_ellipsoid.semi_intermediate_axis_length
-    else:
-        hp.seh, hp.sez = None, None
+    except Exception:
+        hp.sez = 5.0
     if _m:
         hp.qmag = _m.mag
 
@@ -69,10 +89,10 @@ def inputOBSPY(hp, event):
         hp.sname[k] = pick.waveform_id.station_code
         hp.snet[k] = pick.waveform_id.network_code
         hp.scomp[k] = pick.waveform_id.channel_code
-        if pick.creation_info:
+        try:
             hp.arid[k] = pick.creation_info.version
-        else:
-            hp.arid[k] = 0
+        except AttributeError:
+            hp.arid[k] = "1"
 
         hp.qazi[k] = arrv.azimuth
         hp.dist[k] = arrv.distance * 111.2

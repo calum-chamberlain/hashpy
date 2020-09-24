@@ -397,14 +397,12 @@ class HashPype(object):
         """
         for k in range(self.npol):
             print(
-                (
-                    "{0}   {1} {2} {3} {4}".format(
-                        k,
-                        self.sname[k],
-                        self.p_azi_mc[k, 0],
-                        self.p_the_mc[k, 0],
-                        self.p_pol[k],
-                    )
+                "{0}   {1} {2} {3} {4}".format(
+                    k,
+                    self.sname[k],
+                    self.p_azi_mc[k, 0],
+                    self.p_the_mc[k, 0],
+                    self.p_pol[k],
                 )
             )
 
@@ -439,14 +437,7 @@ class HashPype(object):
             qmismax = max(int(self.nspr * self.qbadfrac), 2)  # nint
             qextra = max(int(self.nspr * self.qbadfrac * 0.5), 2)  # nint
             # find the set of acceptable focal mechanisms for all trials
-            (
-                self.nf2,
-                self.strike2,
-                self.dip2,
-                self.rake2,
-                self.f1norm,
-                self.f2norm,
-            ) = focalamp_mc(
+            self.nf2, self.strike2, self.dip2, self.rake2, self.f1norm, self.f2norm = focalamp_mc(
                 self.p_azi_mc,
                 self.p_the_mc,
                 self.sp_ratio[: self.npol],
@@ -466,14 +457,7 @@ class HashPype(object):
             nextra = max(int(self.npol * self.badfrac * 0.5), 2)  # nint
 
             # find the set of acceptable focal mechanisms for all trials
-            (
-                self.nf2,
-                self.strike2,
-                self.dip2,
-                self.rake2,
-                self.f1norm,
-                self.f2norm,
-            ) = focalmc(
+            self.nf2, self.strike2, self.dip2, self.rake2, self.f1norm, self.f2norm = focalmc(
                 self.p_azi_mc,
                 self.p_the_mc,
                 self.p_pol[: self.npol],
@@ -490,14 +474,7 @@ class HashPype(object):
         self.nout1 = min(self.maxout, self.nf2)  # number mechs to return
 
         # find the probable mechanism from the set of acceptable solutions
-        (
-            self.nmult,
-            self.str_avg,
-            self.dip_avg,
-            self.rak_avg,
-            self.prob,
-            self.var_est,
-        ) = mech_prob(
+        self.nmult, self.str_avg, self.dip_avg, self.rak_avg, self.prob, self.var_est = mech_prob(
             self.f1norm[:, : self.nout2],
             self.f2norm[:, : self.nout2],
             self.cangle,

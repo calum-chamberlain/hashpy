@@ -322,17 +322,11 @@ while True:
 
     # view polarity data
     for k in range(npol):
-        print(
-            (
-                "{0}   {1} {2} {3} {4}".format(
-                    k, sname[k], p_azi_mc[k, 0], p_the_mc[k, 0], p_pol[k]
-                )
-            )
-        )
-
+        print('{0}   {1} {2} {3} {4}'.format(k,sname[k],p_azi_mc[k,0],p_the_mc[k,0],p_pol[k]))
+    
     # stop if there aren't enough polarities
-    print(("cid = {0}  npol = {1}".format(icusp, npol)))
-    if npol < npolmin:
+    print('cid = {0}  npol = {1}'.format(icusp,npol))
+    if (npol < npolmin):
         str_avg[0] = 999
         dip_avg[0] = 99
         rak_avg[0] = 999
@@ -394,14 +388,8 @@ while True:
         )  # nout2
 
         for imult in range(nmult):
-            var_avg[imult] = (var_est[0, imult] + var_est[1, imult]) / 2.0
-            print(
-                (
-                    "cid = {0} {1}  mech = {2} {3} {4}".format(
-                        icusp, imult, str_avg[imult], dip_avg[imult], rak_avg[imult]
-                    )
-                )
-            )
+            var_avg[imult] = (var_est[0,imult] + var_est[1,imult]) / 2.
+            print('cid = {0} {1}  mech = {2} {3} {4}'.format(icusp,imult,str_avg[imult],dip_avg[imult],rak_avg[imult]))
             # find misfit for prefered solution
             mfrac[imult], stdr[imult] = get_misf(
                 p_azi_mc[:npol, 0],
@@ -516,26 +504,16 @@ while True:
     )
     format11 = " ".join(["{{{0}}}".format(s) for s in range(9)]) + "\n"
     for ic in range(nout1):
-        fh11.write(
-            format11.format(
-                strike2[ic],
-                dip2[ic],
-                rake2[ic],
-                f1norm[0, ic],
-                f1norm[1, ic],
-                f1norm[2, ic],
-                f2norm[0, ic],
-                f2norm[1, ic],
-                f2norm[2, ic],
-            )
-        )
-
-    # test_stereo(p_azi_mc[:npol,0],p_the_mc[:npol,0],p_pol[:npol],sdr=[str_avg[0],dip_avg[0],rak_avg[0]])
+        fh11.write(format11.format(strike2[ic],dip2[ic],rake2[ic],
+                   f1norm[0,ic], f1norm[1,ic],f1norm[2,ic],f2norm[0,ic],
+                   f2norm[1,ic],f2norm[2,ic]))
+    
+    #test_stereo(p_azi_mc[:npol,0],p_the_mc[:npol,0],p_pol[:npol],sdr=[str_avg[0],dip_avg[0],rak_avg[0]])
 
     go_again = input("Continue or stop (and graph)? [Y/n]: ")
-
-    if go_again == "" or go_again in "Yesyes":
-        continue  # next earthquake line
+    
+    if go_again == '' or go_again in 'Yesyes':
+        continue # next earthquake line
     else:
         test_stereo(
             p_azi_mc[:npol, 0],
