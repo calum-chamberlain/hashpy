@@ -1,3 +1,3 @@
 #
-from focalmechplotter import FocalMechPlotter
+from .focalmechplotter import FocalMechPlotter
 

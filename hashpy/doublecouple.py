@@ -10,6 +10,7 @@ Calulator for getting double couple information
 
 import numpy as np
 
+
 class NodalPlane(list):
     """
     List to hold strike, dip, rake of a nodal plane
@@ -32,10 +33,11 @@ class NodalPlane(list):
     :param rake:   degrees of rake
 
     """
-    
+
     @property
     def strike(self):
         return self[0]
+
     @strike.setter
     def strike(self, value):
         self[0] = value
@@ -43,6 +45,7 @@ class NodalPlane(list):
     @property
     def dip(self):
         return self[1]
+
     @dip.setter
     def dip(self, value):
         self[1] = value
@@ -50,6 +53,7 @@ class NodalPlane(list):
     @property
     def rake(self):
         return self[2]
+
     @rake.setter
     def rake(self, value):
         self[2] = value
@@ -75,10 +79,14 @@ class NodalPlane(list):
         >>> p = NodalPlane(strike=145, dip=45, rake=67)
         >>> p.dip = 30
         """
-        super(NodalPlane,self).__init__([None,None,None])
-        
+        super(NodalPlane, self).__init__([None, None, None])
+
         if args:
-            if isinstance(args[0], list) or isinstance(args[0], tuple) and len(args[0]) == 3 :
+            if (
+                isinstance(args[0], list)
+                or isinstance(args[0], tuple)
+                and len(args[0]) == 3
+            ):
                 self[:] = [float(n) for n in args[0]]
             elif len(args) == 3:
                 self[:] = [float(n) for n in args]
@@ -114,35 +122,38 @@ class DoubleCouple(object):
     >>> dc.axis['P']
 
     """
-    
+
     _plane = None
-    
+
     @property
     def plane1(self):
-        '''Return Preferred plane'''
+        """Return Preferred plane"""
         return NodalPlane(*self._plane)
-    
+
     @property
     def plane2(self):
-        '''Return Auxiliary plane'''
+        """Return Auxiliary plane"""
         auxplane = self.aux_plane(*self._plane)
         return NodalPlane(*auxplane)
-    
+
     @property
     def axis(self):
-        '''return direction and dip for P and T axes'''
-        dipP, dipT, aziP, aziT = self.nodal2pt(*self.plane1+self.plane2)
-        return {'P': {'azimuth': aziP, 'dip': dipP}, 'T': {'azimuth': aziT, 'dip': dipT}}
-    
+        """return direction and dip for P and T axes"""
+        dipP, dipT, aziP, aziT = self.nodal2pt(*self.plane1 + self.plane2)
+        return {
+            "P": {"azimuth": aziP, "dip": dipP},
+            "T": {"azimuth": aziT, "dip": dipT},
+        }
+
     def __init__(self, nodal_plane=None):
         self._plane = nodal_plane
-    
+
     @staticmethod
     def zero_360(str1):
-        '''Put an angle between 0 and 360 degrees
+        """Put an angle between 0 and 360 degrees
     
         Genevieve Patau
-        '''
+        """
         if str1 >= 360:
             str1 -= 360
         elif str1 < 0:
@@ -150,10 +161,10 @@ class DoubleCouple(object):
         else:
             pass
         return str1
-    
+
     @classmethod
-    def nodal2pt(cls, str1,da1,sa1,str2,da2,sa2):
-        '''Compute azimuth and plungement of P-T axis 
+    def nodal2pt(cls, str1, da1, sa1, str2, da2, sa2):
+        """Compute azimuth and plungement of P-T axis 
         (from nodal plane strikes, dips and rakes.)
         
         Mark's python port from Gabe's perl port from:
@@ -175,60 +186,60 @@ class DoubleCouple(object):
         (Original fxn used azimuth of dip plane, not strike)
         str1 = dd1 - 90;
         str2 = dd2 - 90;
-        '''
+        """
         # Constants, mostly unnecessary, fix later:
         # e.g. M_PI = np.pi
-        EPSIL   = .0001
-        M_PI    = 3.14159265358979323846
-        M_PI_2  = 1.57079632679489661923
-        M_PI_4  = 0.78539816339744830962
+        EPSIL = 0.0001
+        M_PI = 3.14159265358979323846
+        M_PI_2 = 1.57079632679489661923
+        M_PI_4 = 0.78539816339744830962
         M_SQRT2 = 1.41421356237309504880
-        TWO_PI  = 6.28318530717958647692
-        D2R  = M_PI / 180.0
-        
-        #my ($pp, $dp, $pt, $dt, $xp, $yp);
-        
+        TWO_PI = 6.28318530717958647692
+        D2R = M_PI / 180.0
+
+        # my ($pp, $dp, $pt, $dt, $xp, $yp);
+
         im = 0
         pure_strike_slip = 0
-        
+
         if abs(np.sin(sa1 * D2R)) > EPSIL:
             im = sa1 / abs(sa1)
         elif abs(np.sin(sa2 * D2R)) > EPSIL:
             im = sa2 / abs(sa2)
         else:
             pure_strike_slip = 1
-        
+
         if pure_strike_slip:
             if np.cos(sa1 * D2R) < 0:
                 pp = cls.zero_360(str1 + 45)
                 pt = cls.zero_360(str1 - 45)
             else:
-                pp = cls.zero_360(str1 - 45);
-                pt = cls.zero_360(str1 + 45);
+                pp = cls.zero_360(str1 - 45)
+                pt = cls.zero_360(str1 + 45)
             dp = 0
             dt = 0
         else:
-            cd1 = np.cos(da1 * D2R) *  M_SQRT2
-            sd1 = np.sin(da1 * D2R) *  M_SQRT2
-            cd2 = np.cos(da2 * D2R) *  M_SQRT2
-            sd2 = np.sin(da2 * D2R) *  M_SQRT2
+            cd1 = np.cos(da1 * D2R) * M_SQRT2
+            sd1 = np.sin(da1 * D2R) * M_SQRT2
+            cd2 = np.cos(da2 * D2R) * M_SQRT2
+            sd2 = np.sin(da2 * D2R) * M_SQRT2
             cp1 = -(np.cos(str1 * D2R)) * sd1
             sp1 = np.sin(str1 * D2R) * sd1
             cp2 = -(np.cos(str2 * D2R)) * sd2
             sp2 = np.sin(str2 * D2R) * sd2
-            
+
             amz = -(cd1 + cd2)
             amx = -(sp1 + sp2)
-            amy =   cp1 + cp2
-            dx  = np.arctan2(np.sqrt(amx * amx + amy * amy), amz) - M_PI_2
-            px  = np.arctan2(amy, -amx)
+            amy = cp1 + cp2
+            dx = np.arctan2(np.sqrt(amx * amx + amy * amy), amz) - M_PI_2
+            px = np.arctan2(amy, -amx)
 
             if px < 0:
                 px += TWO_PI
-            
-            amz   = cd1 - cd2
-            amx   = sp1 - sp2
-            amy   = - cp1 + cp2
+
+            amz = cd1 - cd2
+            amx = sp1 - sp2
+            amy = -cp1 + cp2
             dy = np.arctan2(np.sqrt(amx * amx + amy * amy), -abs(amz)) - M_PI_2
             py = np.arctan2(amy, -amx)
 
@@ -252,7 +263,7 @@ class DoubleCouple(object):
             dp *= 180 / M_PI
             pt *= 180 / M_PI
             dt *= 180 / M_PI
-        
+
         # I added this line b/c the names are confusing - MCW
         dip_p, dip_t, azi_p, azi_t = dp, dt, pp, pt
         return dip_p, dip_t, azi_p, azi_t
@@ -277,9 +288,9 @@ class DoubleCouple(object):
         strike = np.arctan2(e, n) * r2d
         strike = strike - 90
         while strike >= 360:
-                strike = strike - 360
+            strike = strike - 360
         while strike < 0:
-                strike = strike + 360
+            strike = strike + 360
         x = np.sqrt(np.power(n, 2) + np.power(e, 2))
         dip = np.arctan2(x, u) * r2d
         return (strike, dip)
@@ -320,5 +331,3 @@ class DoubleCouple(object):
         if sl3 <= 0:
             rake = -z * r2d
         return (strike, dip, rake)
-
-
