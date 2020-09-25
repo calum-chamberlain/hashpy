@@ -4,33 +4,19 @@
 from hashpy.doublecouple import DoubleCouple
 from obspy.core.utcdatetime import UTCDateTime
 from obspy.core.event import (
-    Catalog,
     Event,
     Origin,
     CreationInfo,
-    Magnitude,
-    EventDescription,
-    OriginUncertainty,
-    OriginQuality,
-    CompositeTime,
-    ConfidenceEllipsoid,
-    StationMagnitude,
     Comment,
     WaveformStreamID,
     Pick,
-    QuantityError,
     Arrival,
     FocalMechanism,
-    MomentTensor,
     NodalPlanes,
     PrincipalAxes,
     Axis,
     NodalPlane,
-    SourceTimeFunction,
-    Tensor,
-    DataUsed,
     ResourceIdentifier,
-    StationMagnitudeContribution,
 )
 
 
@@ -62,17 +48,17 @@ def inputOBSPY(hp, event):
     hp.tstamp = _o.time.timestamp
     hp.qlat = _o.latitude
     hp.qlon = _o.longitude
-    hp.qdep = _o.depth
+    hp.qdep = _o.depth / 1000.
     try:
-        hp.icusp = _o.creation_info.version
+        hp.icusp = _o.creation_info.version or 1
     except AttributeError:
-        hp.icusp = "1"
+        hp.icusp = 1
     try:
-        hp.seh = _o.origin_uncertainty.confidence_ellipsoid.semi_major_axis_length
+        hp.seh = _o.origin_uncertainty.confidence_ellipsoid.semi_major_axis_length or 5.0
     except Exception:
         hp.seh = 5.0
     try:
-        hp.sez = _o.origin_uncertainty.confidence_ellipsoid.semi_intermediate_axis_length
+        hp.sez = _o.origin_uncertainty.confidence_ellipsoid.semi_intermediate_axis_length or 5.0
     except Exception:
         hp.sez = 5.0
     if _m:
@@ -91,8 +77,8 @@ def inputOBSPY(hp, event):
         hp.scomp[k] = pick.waveform_id.channel_code
         try:
             hp.arid[k] = pick.creation_info.version
-        except AttributeError:
-            hp.arid[k] = "1"
+        except (AttributeError, TypeError):
+            hp.arid[k] = 1
 
         hp.qazi[k] = arrv.azimuth
         hp.dist[k] = arrv.distance * 111.2
@@ -106,18 +92,18 @@ def inputOBSPY(hp, event):
         if arrv.phase not in "Pp":
             continue
 
-        if pick.polarity is "positive":
+        if pick.polarity == "positive":
             hp.p_pol[k] = 1
-        elif pick.polarity is "negative":
+        elif pick.polarity == "negative":
             hp.p_pol[k] = -1
         else:
             continue
 
-        if pick.onset is "impulsive":
+        if pick.onset == "impulsive":
             hp.p_qual[k] = 0
-        elif pick.onset is "emergent":
+        elif pick.onset == "emergent":
             hp.p_qual[k] = 1
-        elif pick.onset is "questionable":
+        elif pick.onset == "questionable":
             hp.p_qual[k] = 1
         else:
             hp.p_qual[k] = 0

@@ -65,7 +65,12 @@ In [3]:
 
 ### Input/Output
 
-Data can be input into HASH in various formats. This is currently handled in HASHpy by registering a format in the `hashpy.io` module by adding a module/functions to the dictionary in `hashpy.io.core`. (May change in future releases). I/O functions are then called by the HashPype methods `HashPype.input()` and `HashPype.output()`. If the 'output' method is called with no format it will return a simple string with the event ID with the best strike/dip/rake
+Data can be input into HASH in various formats. This is currently handled in 
+HASHpy by registering a format in the `hashpy.io` module by adding a module/functions 
+to the dictionary in `hashpy.io.core`. (May change in future releases). I/O 
+functions are then called by the HashPype methods `HashPype.input()` and 
+`HashPype.output()`. If the 'output' method is called with no format it will 
+return a simple string with the event ID with the best strike/dip/rake.
 
 Currently Supports:
 * ObsPy Event object I/O
@@ -103,7 +108,7 @@ pass2 = hp.check_maximum_gap()
 if pass1 and pass2:
     hp.calculate_hash_focalmech()
     hp.calculate_quality()
-    print hp.output() # default output is a simple string
+    print(hp.output()) # default output is a simple string
 else:
     raise HashError("Didn't pass user checks!")
 
@@ -111,7 +116,12 @@ else:
 
 ### Plotting
 
-A trial implementation of plotting exists, using `matplotlib` and the `mplstereonet` package, as the  `hashpy.plotting.focalmechplotter.FocalMechPlotter` class. It accepts an ObsPy Event containing Picks, Origin/Arrivals, FocalMechanism, etc, objects (as output from HashPype) and generates a stereonet plot. Multiple FocalMechansim solutions from HASH are accessible through the navigation toolbar 'back' and 'forward' arrows.
+A trial implementation of plotting exists, using `matplotlib` and the 
+`mplstereonet` package, as the  `hashpy.plotting.focalmechplotter.FocalMechPlotter` 
+class. It accepts an ObsPy Event containing Picks, Origin/Arrivals, 
+FocalMechanism, etc, objects (as output from HashPype) and generates a 
+stereonet plot. Multiple FocalMechansim solutions from HASH are accessible 
+through the navigation toolbar 'back' and 'forward' arrows.
 
 ```python
 # Get an obspy Event object as output
