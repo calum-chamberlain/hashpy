@@ -71,7 +71,10 @@ def inputOBSPY(hp, event):
     k = 0
     for _i, arrv in enumerate(_o.arrivals):
         # load up params
-        pick = arrv.pick_id.get_referred_object()
+        try:
+            pick = arrv.pick_id.get_referred_object()
+        except AttributeError:
+            continue
         hp.sname[k] = pick.waveform_id.station_code
         hp.snet[k] = pick.waveform_id.network_code
         hp.scomp[k] = pick.waveform_id.channel_code
